@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">Registered Users</h2>
+  <div class="table-responsive">
+    <table class="table table-canteen align-middle">
+      <thead><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Orders</th></tr></thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="fw-semibold">{{ u.username }}</td>
+          <td>{{ u.first_name }} {{ u.last_name }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.profile.phone_number|default:"—" }}</td>
+          <td class="small text-muted">{{ u.date_joined|date:"d M Y" }}</td>
+          <td>{{ u.orders.count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-muted">No registered users yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

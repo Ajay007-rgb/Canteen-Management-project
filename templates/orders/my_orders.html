@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">My Orders</h2>
+  {% for order in orders %}
+  <div class="order-ticket mb-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center">
+      <div>
+        <div class="order-number">{{ order.order_number }}</div>
+        <small class="text-muted">{{ order.created_at|date:"d M Y, h:i A" }} · {{ order.items.count }} item(s)</small>
+      </div>
+      <div class="text-end">
+        <span class="status-chip status-{{ order.status }}">{{ order.get_status_display }}</span>
+        <div class="fw-semibold mt-1">₹{{ order.total_amount }}</div>
+      </div>
+    </div>
+    <div class="mt-2">
+      <a href="{% url 'orders:order_tracking' order.id %}" class="small">Track this order →</a>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-muted">You haven't placed any orders yet. <a href="{% url 'menu:menu_list' %}">Browse the menu</a>.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Manage Categories{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">Category Management</h2>
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <table class="table table-canteen align-middle">
+        <thead><tr><th>Name</th><th>Items</th><th>Active</th><th></th></tr></thead>
+        <tbody>
+          {% for cat in categories %}
+          <tr>
+            <td class="fw-semibold">{{ cat.name }}</td>
+            <td>{{ cat.item_count }}</td>
+            <td>{% if cat.is_active %}<span class="status-chip status-ready">Active</span>{% else %}<span class="status-chip status-cancelled">Inactive</span>{% endif %}</td>
+            <td>
+              <form method="post" action="{% url 'dashboard:category_delete' cat.id %}" class="d-inline" onsubmit="return confirm('Delete {{ cat.name }}? This will also delete its food items.');">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-link text-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-muted">No categories yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-lg-5">
+      <div class="food-card p-4">
+        <h3 class="h6 mb-3">Add Category</h3>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Name</label>
+            {{ form.name }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            {{ form.description }}
+          </div>
+          <div class="form-check mb-3">
+            {{ form.is_active }}
+            <label class="form-check-label">Active</label>
+          </div>
+          <button type="submit" class="btn btn-chili w-100">Add Category</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">Admin Dashboard</h2>
+
+  <div class="mb-4 d-flex flex-wrap gap-2">
+    <a href="{% url 'dashboard:food_management' %}" class="btn btn-outline-canteen btn-sm">Manage Food</a>
+    <a href="{% url 'dashboard:category_management' %}" class="btn btn-outline-canteen btn-sm">Manage Categories</a>
+    <a href="{% url 'dashboard:order_management' %}" class="btn btn-outline-canteen btn-sm">Manage Orders</a>
+    <a href="{% url 'dashboard:user_management' %}" class="btn btn-outline-canteen btn-sm">View Users</a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card"><div class="stat-value">{{ total_users }}</div><div class="stat-label">Total Users</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card"><div class="stat-value">{{ total_food_items }}</div><div class="stat-label">Food Items</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card"><div class="stat-value">{{ total_orders }}</div><div class="stat-label">Total Orders</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card accent-chili"><div class="stat-value">{{ pending_orders }}</div><div class="stat-label">Pending Orders</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card accent-olive"><div class="stat-value">{{ completed_orders }}</div><div class="stat-label">Completed Orders</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card"><div class="stat-value">{{ todays_orders_count }}</div><div class="stat-label">Today's Orders</div></div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card accent-chili"><div class="stat-value">₹{{ todays_revenue }}</div><div class="stat-label">Today's Revenue</div></div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="food-card p-3">
+        <h3 class="h6 mb-3">Orders &amp; Revenue — last 7 days</h3>
+        <canvas id="ordersChart" height="140"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="food-card p-3">
+        <h3 class="h6 mb-3">Popular Food Items</h3>
+        <canvas id="popularChart" height="140"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+  const labels = {{ chart_labels|safe }};
+  new Chart(document.getElementById('ordersChart'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Orders', data: {{ chart_orders|safe }}, backgroundColor: '#E1572C', yAxisID: 'y' },
+        { label: 'Revenue (₹)', data: {{ chart_revenue|safe }}, type: 'line', borderColor: '#5C7A3D', backgroundColor: '#5C7A3D', yAxisID: 'y1', tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true, position: 'left', title: { display: true, text: 'Orders' } },
+        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Revenue' } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('popularChart'), {
+    type: 'doughnut',
+    data: {
+      labels: {{ popular_labels|safe }},
+      datasets: [{ data: {{ popular_data|safe }}, backgroundColor: ['#E1572C','#5C7A3D','#D6A24C','#2A241E','#C1451F'] }]
+    },
+    options: { responsive: true }
+  });
+</script>
+{% endblock %}

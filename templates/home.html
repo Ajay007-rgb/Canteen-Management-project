@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Cloud-based · Always fresh</div>
+    <h1 class="mt-2">Order canteen food<br>without the queue.</h1>
+    <p class="lead mt-3 col-lg-6">Browse today's menu, add what you like to your cart, and track your order in real time — from pending to ready for pickup.</p>
+    <a href="{% url 'menu:menu_list' %}" class="btn btn-chili btn-lg mt-2">View Menu</a>
+    {% if not user.is_authenticated %}
+    <a href="{% url 'accounts:register' %}" class="btn btn-outline-canteen btn-lg mt-2 ms-2" style="border-color:#D8D0C2;color:#FBF7F0;">Create Account</a>
+    {% endif %}
+  </div>
+</section>
+
+<div class="container my-5">
+  <h2 class="section-title h4">Categories</h2>
+  <div class="row g-2 mb-5">
+    {% for cat in categories %}
+    <div class="col-6 col-md-3 col-lg-2">
+      <a href="{% url 'menu:menu_list' %}?category={{ cat.id }}" class="d-block text-center py-3 px-2 food-card text-decoration-none">
+        <span class="fw-semibold" style="color:var(--ink);">{{ cat.name }}</span>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2 class="section-title h4">Popular right now</h2>
+  <div class="row g-4">
+    {% for item in featured_items %}
+    <div class="col-sm-6 col-lg-4">
+      <div class="food-card">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" class="food-img" alt="{{ item.name }}">
+        {% else %}
+        <div class="food-img d-flex align-items-center justify-content-center text-muted">No image</div>
+        {% endif %}
+        <div class="food-body">
+          <span class="category-pill">{{ item.category.name }}</span>
+          <h3 class="h6 mt-2 mb-1"><a href="{{ item.get_absolute_url }}" class="text-decoration-none" style="color:inherit;">{{ item.name }}</a></h3>
+          <div class="price">₹{{ item.price }}</div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No food items yet — check back soon!</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="auth-card">
+    <h2 class="mb-1">Welcome back</h2>
+    <p class="text-muted mb-4">Log in to order and track your food.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">{{ field.label }}</label>
+          {{ field.errors }}
+          <input type="{% if field.name == 'password' %}password{% else %}text{% endif %}" name="{{ field.name }}" class="form-control" {% if field.value %}value="{{ field.value }}"{% endif %} required>
+        </div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <button type="submit" class="btn btn-chili w-100 mt-2">Login</button>
+    </form>
+    <p class="text-center mt-3 mb-0 text-muted">No account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+  </div>
+</div>
+{% endblock %}

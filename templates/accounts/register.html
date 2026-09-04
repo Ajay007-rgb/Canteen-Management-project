@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="auth-card" style="max-width:560px;">
+    <h2 class="mb-1">Create your account</h2>
+    <p class="text-muted mb-4">Register as a student to start ordering.</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">First name</label>
+          {{ form.first_name }}
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Last name</label>
+          {{ form.last_name }}
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Username</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Email</label>
+        {{ form.email }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Phone number</label>
+        {{ form.phone_number }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Address</label>
+        {{ form.address }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Password</label>
+        {{ form.password1 }}
+        {{ form.password1.errors }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Confirm password</label>
+        {{ form.password2 }}
+        {{ form.password2.errors }}
+      </div>
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      <button type="submit" class="btn btn-chili w-100 mt-2">Create Account</button>
+    </form>
+    <p class="text-center mt-3 mb-0 text-muted">Already have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+  </div>
+</div>
+{% endblock %}

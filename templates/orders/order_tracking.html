@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Track Order{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">Order Tracking</h2>
+
+  <div class="order-ticket mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center">
+      <div>
+        <div class="order-number">{{ order.order_number }}</div>
+        <small class="text-muted">Placed on {{ order.created_at|date:"d M Y, h:i A" }}</small>
+      </div>
+      <span class="status-chip status-{{ order.status }}">{{ order.get_status_display }}</span>
+    </div>
+
+    {% if order.status != 'cancelled' %}
+    <div class="tracker">
+      {% for step in steps %}
+      <div class="step {% if forloop.counter0 < current_index %}done{% elif forloop.counter0 == current_index %}active{% endif %}">
+        <div class="dot">{{ forloop.counter }}</div>
+        <div class="step-label">{{ step|title }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-danger mt-3 mb-0">This order was cancelled.</p>
+    {% endif %}
+
+    <hr>
+    <h3 class="h6 mb-2">Items</h3>
+    {% for oi in order.items.all %}
+    <div class="d-flex justify-content-between small py-1">
+      <span>{{ oi.quantity }} × {{ oi.food_name }}</span>
+      <span>₹{{ oi.line_total }}</span>
+    </div>
+    {% endfor %}
+    <div class="d-flex justify-content-between fw-semibold mt-2 pt-2 border-top">
+      <span>Total</span><span>₹{{ order.total_amount }}</span>
+    </div>
+    {% if order.delivery_note %}
+    <div class="mt-2 small text-muted">Note: {{ order.delivery_note }}</div>
+    {% endif %}
+  </div>
+
+  <a href="{% url 'orders:my_orders' %}" class="small">← Back to my orders</a>
+</div>
+{% endblock %}

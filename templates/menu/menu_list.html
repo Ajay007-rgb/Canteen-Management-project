@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Menu{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">Food Menu</h2>
+
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-md-6">
+      <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search for food...">
+    </div>
+    <div class="col-md-4">
+      <select name="category" class="form-select">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-chili w-100" type="submit">Filter</button>
+    </div>
+  </form>
+
+  <div class="row g-4">
+    {% for item in items %}
+    <div class="col-sm-6 col-lg-4">
+      <div class="food-card">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" class="food-img" alt="{{ item.name }}">
+        {% else %}
+        <div class="food-img d-flex align-items-center justify-content-center text-muted">No image</div>
+        {% endif %}
+        <div class="food-body">
+          <span class="category-pill">{{ item.category.name }}</span>
+          <h3 class="h6 mt-2 mb-1"><a href="{{ item.get_absolute_url }}" class="text-decoration-none" style="color:inherit;">{{ item.name }}</a></h3>
+          <p class="small text-muted mb-2">{{ item.description|truncatewords:12 }}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="price">₹{{ item.price }}</div>
+            {% if user.is_authenticated and not user.is_staff %}
+            <form method="post" action="{% url 'cart:add_to_cart' item.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="btn btn-sm btn-olive">Add to Cart</button>
+            </form>
+            {% elif not user.is_authenticated %}
+            <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-outline-canteen">Login to order</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No food items match your search.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

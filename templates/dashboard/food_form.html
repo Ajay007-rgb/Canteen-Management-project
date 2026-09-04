@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">{{ title }}</h2>
+  <div class="food-card p-4 col-lg-6">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Name</label>
+        {{ form.name }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Description</label>
+        {{ form.description }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Category</label>
+        {{ form.category }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Price (₹)</label>
+        {{ form.price }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Image</label>
+        {{ form.image }}
+        {% if form.instance.image %}<div class="mt-2"><img src="{{ form.instance.image.url }}" style="max-height:100px;" class="rounded"></div>{% endif %}
+      </div>
+      <div class="form-check mb-3">
+        {{ form.is_available }}
+        <label class="form-check-label">Available for ordering</label>
+      </div>
+      <button type="submit" class="btn btn-chili">Save</button>
+      <a href="{% url 'dashboard:food_management' %}" class="btn btn-outline-canteen">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

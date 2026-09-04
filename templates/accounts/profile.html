@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">My Profile</h2>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="food-card p-4">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">First name</label>
+            {{ form.first_name }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Last name</label>
+            {{ form.last_name }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Email</label>
+            {{ form.email }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Phone number</label>
+            {{ form.phone_number }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Address</label>
+            {{ form.address }}
+          </div>
+          <button type="submit" class="btn btn-chili">Save Changes</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <h3 class="h6 mb-3">Recent Orders</h3>
+      {% for order in recent_orders %}
+        <div class="order-ticket mb-2 d-flex justify-content-between align-items-center">
+          <div>
+            <div class="order-number">{{ order.order_number }}</div>
+            <small class="text-muted">{{ order.created_at|date:"d M Y, h:i A" }}</small>
+          </div>
+          <div class="text-end">
+            <span class="status-chip status-{{ order.status }}">{{ order.get_status_display }}</span>
+            <div class="mt-1"><a href="{% url 'orders:order_tracking' order.id %}" class="small">Track →</a></div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No orders yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

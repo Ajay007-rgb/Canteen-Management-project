@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">Order Management</h2>
+
+  <form method="get" class="mb-3 col-md-4">
+    <select name="status" class="form-select" onchange="this.form.submit()">
+      <option value="">All Statuses</option>
+      {% for value, label in status_choices %}
+      <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-canteen align-middle">
+      <thead><tr><th>Order #</th><th>User</th><th>Items</th><th>Total</th><th>Status</th><th>Placed</th><th>Update</th></tr></thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td class="order-number">{{ order.order_number }}</td>
+          <td>{{ order.user.username }}</td>
+          <td>{{ order.items.count }}</td>
+          <td>₹{{ order.total_amount }}</td>
+          <td><span class="status-chip status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+          <td class="small text-muted">{{ order.created_at|date:"d M, h:i A" }}</td>
+          <td>
+            <form method="post" action="{% url 'dashboard:order_update_status' order.id %}" class="d-flex gap-1">
+              {% csrf_token %}
+              <select name="status" class="form-select form-select-sm">
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <button class="btn btn-sm btn-olive">Update</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-muted">No orders found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
