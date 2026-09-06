@@ -12,6 +12,15 @@
       </div>
       <div class="text-end">
         <span class="status-chip status-{{ order.status }}">{{ order.get_status_display }}</span>
+
+        <td>
+          {% if order.is_paid %}
+          <span class="status-chip status-ready">✓ Paid</span>
+          {% else %}
+          <span class="status-chip status-cancelled">Unpaid</span>
+          {% endif %}
+        </td>
+
         <div class="fw-semibold mt-1">₹{{ order.total_amount }}</div>
       </div>
     </div>

@@ -15,7 +15,18 @@
 
   <div class="table-responsive">
     <table class="table table-canteen align-middle">
-      <thead><tr><th>Order #</th><th>User</th><th>Items</th><th>Total</th><th>Status</th><th>Placed</th><th>Update</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>User</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Placed</th>
+          <th>Update</th>
+        </tr>
+      </thead>
       <tbody>
         {% for order in orders %}
         <tr>
@@ -23,6 +34,13 @@
           <td>{{ order.user.username }}</td>
           <td>{{ order.items.count }}</td>
           <td>₹{{ order.total_amount }}</td>
+          <td>
+            {% if order.is_paid %}
+            <span class="status-chip status-ready">✓ Paid</span>
+            {% else %}
+            <span class="status-chip status-cancelled">Unpaid</span>
+            {% endif %}
+          </td>
           <td><span class="status-chip status-{{ order.status }}">{{ order.get_status_display }}</span></td>
           <td class="small text-muted">{{ order.created_at|date:"d M, h:i A" }}</td>
           <td>
@@ -38,7 +56,9 @@
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="text-muted">No orders found.</td></tr>
+        <tr>
+          <td colspan="7" class="text-muted">No orders found.</td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>

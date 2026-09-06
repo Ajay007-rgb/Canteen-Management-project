@@ -7,7 +7,35 @@ from cart.models import Cart
 from .models import Order, OrderItem
 import razorpay
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import razorpay.errors
 
+
+@csrf_exempt
+def verify_payment(request):
+    if request.method == 'POST':
+        payment_id = request.POST.get('razorpay_payment_id', '')
+        order_id = request.POST.get('razorpay_order_id', '')
+        signature = request.POST.get('razorpay_signature', '')
+
+        params_dict = {
+            'razorpay_order_id': order_id,
+            'razorpay_payment_id': payment_id,
+            'razorpay_signature': signature,
+        }
+
+        try:
+            razorpay_client.utility.verify_payment_signature(params_dict)
+            order = Order.objects.get(razorpay_order_id=order_id)
+            order.razorpay_payment_id = payment_id
+            order.is_paid = True
+            order.save()
+            return JsonResponse({'status': 'success', 'order_id': order.id})
+        except razorpay.errors.SignatureVerificationError:
+            return JsonResponse({'status': 'failed'})
+
+    return JsonResponse({'status': 'invalid request'})
 
 @login_required
 def checkout(request):
