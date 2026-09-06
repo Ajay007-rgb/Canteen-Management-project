@@ -31,6 +31,8 @@ users — from one dashboard.
 - Checkout and place an order (unique order number, e.g. `ORD-2026-0001`)
 - View order history and live order status tracking
 - Edit profile (name, email, phone, address)
+- Pay securely online via Razorpay (cards, UPI, netbanking) at checkout
+
 
 **Admin**
 - Add / edit / delete food items, with image upload
@@ -41,6 +43,7 @@ users — from one dashboard.
 - Dashboard with live stats: total users, food items, orders, pending /
   completed orders, today's orders, today's revenue, plus charts for
   daily orders, revenue, and the most popular food items
+- See payment status (Paid / Unpaid) for every order
 
 ## 3. Technology Used
 
@@ -52,6 +55,24 @@ users — from one dashboard.
 | Auth           | Django's built-in authentication system       |
 | Static/Media   | WhiteNoise (static), Django FileField (media) |
 | Config         | python-decouple (`.env` environment variables)|
+| Payments       | Razorpay (Test Mode) — card, UPI, netbanking          |
+
+## Payment Gateway (Razorpay)
+
+Payments are handled through **Razorpay** in Test Mode:
+
+- When a student places an order, a Razorpay order is created and a
+  payment popup opens (Card / UPI / Netbanking).
+- On successful payment, the payment is **verified server-side** using
+  Razorpay's signature verification (`razorpay_client.utility.verify_payment_signature`)
+  before the order is marked as paid — this prevents fake/tampered payment
+  confirmations from the browser.
+- The `Order` model tracks `razorpay_order_id`, `razorpay_payment_id`,
+  and `is_paid`.
+- Admins can see the payment status (Paid / Unpaid) for every order in
+  the Order Management dashboard.
+
+**Setup:** Add your Razorpay Test Mode keys to `.env`:
 
 ## 4. System Requirements
 
