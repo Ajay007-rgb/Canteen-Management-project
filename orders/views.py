@@ -5,6 +5,8 @@ from django.views.decorators.http import require_POST
 from django.db import transaction
 from cart.models import Cart
 from .models import Order, OrderItem
+import razorpay
+from django.conf import settings
 
 
 @login_required
@@ -34,8 +36,22 @@ def checkout(request):
                     quantity=ci.quantity,
                 )
             items.delete()  # clear the cart now that the order exists in DB
-        messages.success(request, f'Order {order.order_number} placed successfully!')
-        return redirect('orders:order_tracking', order_id=order.id)
+
+        amount_in_paise = int(order.total_amount * 100)
+        razorpay_order = razorpay_client.order.create({
+            'amount': amount_in_paise,
+            'currency': 'INR',
+            'payment_capture': 1,
+        })
+        order.razorpay_order_id = razorpay_order['id']
+        order.save()       
+
+
+        return render(request, 'orders/payment.html', {
+            'order': order,
+            'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+            'amount_in_paise': amount_in_paise,
+        })
 
     return render(request, 'orders/checkout.html', {'cart': cart, 'items': items})
 
@@ -56,3 +72,5 @@ def order_tracking(request, order_id):
         'steps': steps,
         'current_index': current_index,
     })
+
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))

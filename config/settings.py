@@ -9,7 +9,6 @@ import os
 from pathlib import Path
 from decouple import config, Csv
 import dj_database_url
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ---------------------------------------------------------------------------
@@ -159,3 +158,6 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
 
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+
+RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default='')
+RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default='')   #Razorpay

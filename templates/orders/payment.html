@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Payment{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h2 class="section-title h4">Complete Your Payment</h2>
+
+  <div class="food-card p-4 col-lg-6">
+    <p>Order Number: <strong>{{ order.order_number }}</strong></p>
+    <p>Amount to Pay: <strong>₹{{ order.total_amount }}</strong></p>
+
+    <button id="pay-btn" class="btn btn-chili w-100">Pay Now</button>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('pay-btn').onclick = function () {
+    var options = {
+      "key": "{{ razorpay_key_id }}",
+      "amount": "{{ amount_in_paise }}",
+      "currency": "INR",
+      "name": "CampusCanteen",
+      "description": "Order {{ order.order_number }}",
+      "order_id": "{{ order.razorpay_order_id }}",
+      "handler": function (response) {
+        alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+      }
+    };
+    var rzp = new Razorpay(options);
+    rzp.open();
+  };
+</script>
+{% endblock %}
