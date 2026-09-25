@@ -2,13 +2,13 @@
 
 A full-stack, database-backed canteen ordering system built with **Django**,
 **PostgreSQL (hosted on Supabase)**, and **Bootstrap 5**. Students can browse
-the menu, add items to a cart, place orders, and track their status in real
-time. Admins get a dashboard to manage food items, categories, orders, and
-registered users.
+the menu, add items to a cart, place orders, submit custom food requests, and
+track order status in real time. Admins get a dashboard to manage food items,
+categories, orders, custom food requests, and registered users.
 
 This is a genuinely functional application — every action (register, login,
-add to cart, place an order, change an order's status) is backed by real
-database operations. Nothing is stored only in the browser.
+add to cart, place an order, submit a custom request, change a status) is
+backed by real database operations. Nothing is stored only in the browser.
 
 ---
 
@@ -17,9 +17,11 @@ database operations. Nothing is stored only in the browser.
 CampusCanteen digitizes a college canteen's ordering process. Instead of
 queuing at a counter, students log in, browse the digital menu, place an
 order, and watch it move through **Pending → Preparing → Ready → Completed**.
-Canteen staff manage the whole
- operation — menu, categories, orders, and
-users — from one dashboard.
+
+For food that isn't on the regular menu, students can also submit a
+**Custom Food Request** specifying what they need and the time they need it
+by. Canteen staff manage the whole operation — menu, categories, orders,
+custom requests, and users — from one dashboard.
 
 ## 2. Features
 
@@ -30,15 +32,20 @@ users — from one dashboard.
 - Add to cart, update quantity, remove items
 - Checkout and place an order (unique order number, e.g. `ORD-2026-0001`)
 - View order history and live order status tracking
+- **Submit a Custom Food Request** for items not on the regular menu,
+  specifying the food needed and the required/scheduled time
 - Edit profile (name, email, phone, address)
 - Pay securely online via Razorpay (cards, UPI, netbanking) at checkout
-
 
 **Admin**
 - Add / edit / delete food items, with image upload
 - Set price and availability per item
 - Manage categories
 - View and update the status of every order
+- **View and manage Custom Food Requests** from a dedicated dashboard section
+- **Update Custom Food Request status** as preparation progresses
+  (`Pending → Accepted → Preparing → Ready → Completed`, with `Rejected`
+  available for requests that cannot be fulfilled)
 - View registered users
 - Dashboard with live stats: total users, food items, orders, pending /
   completed orders, today's orders, today's revenue, plus charts for
@@ -57,6 +64,49 @@ users — from one dashboard.
 | Config         | python-decouple (`.env` environment variables)|
 | Payments       | Razorpay (Test Mode) — card, UPI, netbanking          |
 
+## 4. Custom Food Request System
+
+In addition to ordering from the regular menu, students can submit a
+**custom food request** for items that aren't listed, along with the time
+they need it by.
+
+**How it works:**
+1. A logged-in student opens **Custom Order** from the navbar and fills in
+   the requested food item and the required/scheduled time.
+2. The request is saved to the database and appears in the admin's
+   **Food Requests** section.
+3. The admin reviews the request and moves it through the status workflow
+   below as preparation progresses.
+
+**Status workflow**
+
+| Status      | Meaning                                                    |
+|-------------|-------------------------------------------------------------|
+| Pending     | Request submitted by student, awaiting admin review          |
+| Accepted    | Admin has approved the request                                |
+| Preparing   | Food item is currently being prepared                         |
+| Ready       | Food is ready for pickup                                      |
+| Completed   | Request has been fulfilled and collected                      |
+| Rejected    | Request could not be fulfilled                                |
+
+> **Note — in progress:** letting students view their own submitted custom
+> requests and track the status themselves (rather than only the admin
+> seeing it) is planned as the next stage of this feature and is not fully
+> implemented yet.
+
+### Navigation for logged-in students
+
+The navbar for authenticated students includes:
+
+- **Custom Order** — submit a custom food request
+- **My Orders**
+- **Cart**
+- **Profile**
+- **Logout**
+
+Admin/staff users see an **Admin Dashboard** link in place of the
+student-specific navigation.
+
 ## Payment Gateway (Razorpay)
 
 Payments are handled through **Razorpay** in Test Mode:
@@ -72,16 +122,16 @@ Payments are handled through **Razorpay** in Test Mode:
 - Admins can see the payment status (Paid / Unpaid) for every order in
   the Order Management dashboard.
 
-**Setup:** Add your Razorpay Test Mode keys to `.env`:
+**Setup:** Add your Razorpay Test Mode keys to `.env`.
 
-## 4. System Requirements
+## 5. System Requirements
 
 - Python 3.10+
 - pip
 - A free [Supabase](https://supabase.com) account (for the cloud Postgres DB)
 - (Optional) Git, a cloud host such as Render / Railway / PythonAnywhere / Heroku-compatible platform
 
-## 5. Installation Steps
+## 6. Installation Steps
 
 ```bash
 # 1. Clone / unzip the project, then enter the folder
@@ -98,7 +148,7 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-## 6. Database Configuration
+## 7. Database Configuration
 
 The app reads all DB credentials from environment variables — **nothing is
 hard-coded**. You can configure it two ways in `.env`:
@@ -121,7 +171,7 @@ If neither `DATABASE_URL` nor `DB_PASSWORD` is set, the app automatically
 falls back to a local SQLite database (`db.sqlite3`) so you can try it out
 immediately before setting up Supabase.
 
-## 7. Supabase Configuration
+## 8. Supabase Configuration
 
 1. Create a free project at [supabase.com](https://supabase.com).
 2. Go to **Project Settings → Database**.
@@ -133,7 +183,7 @@ immediately before setting up Supabase.
 5. Make sure "Enforce SSL" is respected — `dj_database_url` / `psycopg2`
    will use SSL automatically when connecting to Supabase's hostname.
 
-## 8. Running the Project Locally
+## 9. Running the Project Locally
 
 ```bash
 # Apply database migrations (creates all tables in Supabase/SQLite)
@@ -154,10 +204,10 @@ python manage.py runserver
 
 Visit:
 - `http://127.0.0.1:8000/` — student-facing site
-- `http://127.0.0.1:8000/dashboard/` — admin dashboard (staff users only)
+- `http://127.0.0.1:8000/dashboard/` — admin dashboard (staff users only, includes Food Requests)
 - `http://127.0.0.1:8000/django-admin/` — Django's built-in admin
 
-## 9. Cloud Deployment Instructions
+## 10. Cloud Deployment Instructions
 
 The project is deployment-ready for any platform that runs Python (Render,
 Railway, Heroku-style platforms, PythonAnywhere, a VPS, etc.). General steps:
@@ -185,7 +235,7 @@ Railway, Heroku-style platforms, PythonAnywhere, a VPS, etc.). General steps:
 6. With `DEBUG=False`, Django automatically enforces HTTPS redirects,
    secure cookies, and HSTS (see `config/settings.py`).
 
-## 10. Admin Login Setup
+## 11. Admin Login Setup
 
 Running `python manage.py seed_data` creates a default superuser:
 
@@ -197,12 +247,12 @@ password: AdminPass123
 **Change this password immediately** after first login, either via
 `http://127.0.0.1:8000/django-admin/` or `python manage.py changepassword admin`.
 
-Any user with `is_staff=True` can access `/dashboard/`. Regular students are
-blocked from every dashboard view and URL by the `admin_required` decorator
-(`dashboard/decorators.py`), which checks `request.user.is_staff` — not
-just hides the link in the UI.
+Any user with `is_staff=True` can access `/dashboard/`, including the Food
+Requests section. Regular students are blocked from every dashboard view
+and URL by the `admin_required` decorator (`dashboard/decorators.py`),
+which checks `request.user.is_staff` — not just hides the link in the UI.
 
-## 11. Project Structure
+## 12. Project Structure
 
 ```
 canteen_management/
@@ -214,18 +264,21 @@ canteen_management/
 ├── accounts/          # Registration, login/logout, profile, Profile model
 ├── menu/              # Category & FoodItem models, menu browsing, seed_data command
 ├── cart/               # Cart & CartItem models, add/update/remove
-├── orders/             # Order & OrderItem models, checkout, tracking
-├── dashboard/          # Admin-only dashboard, food/category/order/user management
+├── orders/             # Order & OrderItem models, checkout, tracking,
+│                       # plus the Custom Food Request model, submission
+│                       # form, and status workflow
+├── dashboard/          # Admin-only dashboard, food/category/order/request/user management
 ├── templates/          # All HTML templates (Bootstrap 5 based)
 ├── static/             # CSS/JS
 └── media/              # Uploaded food images (created at runtime)
 ```
 
-## 12. Future Scope
+## 13. Future Scope
 
-- Online payment gateway integration (Razorpay / Stripe)
-- Real-time order status updates via WebSockets (Django Channels)
-- SMS/email/push notifications when order status changes
+- Let students view their own submitted custom food requests and track
+  status in real time *(in progress — planned next stage)*
+- Real-time order/request status updates via WebSockets (Django Channels)
+- SMS/email/push notifications when order or request status changes
 - QR-code based order pickup verification
 - Multi-canteen / multi-branch support
 - Ratings and reviews for food items
