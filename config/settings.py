@@ -173,5 +173,6 @@ AWS_S3_REGION_NAME = config('SUPABASE_REGION', default='ap-south-1')
 AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH = False
+AWS_S3_CUSTOM_DOMAIN = 'osugzqyviowcwxlvkjqb.supabase.co/storage/v1/object/public'
 
 # fix ho gya
