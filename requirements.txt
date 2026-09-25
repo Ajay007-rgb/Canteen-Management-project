@@ -7,3 +7,5 @@ whitenoise==6.7.0
 gunicorn==22.0.0
 razorpay==1.4.2
 setuptools<81
+django-storages==1.14.4
+boto3==1.35.36
