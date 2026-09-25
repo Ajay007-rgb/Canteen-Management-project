@@ -9,7 +9,7 @@ import json
 from .decorators import admin_required
 from menu.models import FoodItem, Category
 from menu.forms import FoodItemForm, CategoryForm
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, FoodRequest
 
 
 @admin_required
@@ -161,6 +161,42 @@ def order_update_status(request, pk):
         messages.success(request, f'Order {order.order_number} marked as {order.get_status_display()}.')
     return redirect('dashboard:order_management')
 
+# ---------------------------------------------------------------------------
+# Food Request management
+# ---------------------------------------------------------------------------
+@admin_required
+def food_request_management(request):
+    requests = FoodRequest.objects.select_related('student').all()
+
+    status_filter = request.GET.get('status', '')
+
+    if status_filter:
+        requests = requests.filter(status=status_filter)
+
+    return render(request, 'dashboard/food_request_management.html', {
+        'requests': requests,
+        'status_choices': FoodRequest.STATUS_CHOICES,
+        'status_filter': status_filter,
+    })
+
+
+@admin_required
+@require_POST
+def food_request_update_status(request, pk):
+    food_request = get_object_or_404(FoodRequest, pk=pk)
+
+    new_status = request.POST.get('status')
+
+    if new_status in dict(FoodRequest.STATUS_CHOICES):
+        food_request.status = new_status
+        food_request.save()
+
+        messages.success(
+            request,
+            f'Food request marked as {food_request.get_status_display()}.'
+        )
+
+    return redirect('dashboard:food_request_management')
 
 # ---------------------------------------------------------------------------
 # User management

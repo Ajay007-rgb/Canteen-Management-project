@@ -4,7 +4,9 @@ from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.db import transaction
 from cart.models import Cart
-from .models import Order, OrderItem
+from .models import Order, OrderItem,FoodRequest
+from django.shortcuts import render, redirect
+from .form import FoodRequestForm
 import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -102,3 +104,37 @@ def order_tracking(request, order_id):
     })
 
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+
+
+@login_required
+def create_food_request(request):
+    if request.method == 'POST':
+        form = FoodRequestForm(request.POST)
+
+        if form.is_valid():
+            food_request = form.save(commit=False)
+            food_request.student = request.user
+            food_request.save()
+
+            return redirect('orders:create_food_request')
+
+        else:
+            print("FORM ERRORS:", form.errors)
+
+    else:
+        form = FoodRequestForm()
+
+    return render(request, 'orders/food_request.html', {'form': form})
+
+@login_required
+def my_food_requests(request):
+    food_requests = FoodRequest.objects.filter(
+        student=request.user
+    ).order_by('-created_at')
+
+    return render(
+        request,
+        'orders/my_food_requests.html',
+        {'food_requests': food_requests}
+    )

@@ -15,7 +15,7 @@
 <nav class="navbar navbar-expand-lg navbar-canteen">
   <div class="container">
     <a class="navbar-brand" href="{% url 'home' %}">Campus<span>Canteen</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" style="border-color:#666;">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" style="border-color:#666; background-color: aliceblue;">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navMain">
@@ -23,7 +23,9 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'menu:menu_list' %}">Menu</a></li>
         {% if user.is_authenticated and not user.is_staff %}
-        <li class="nav-item"><a class="nav-link" href="{% url 'orders:my_orders' %}">My Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'orders:my_orders' %}">My Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'orders:create_food_request' %}">Custom Order</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'orders:my_food_requests' %}">My Requests</a></li>
         {% endif %}
         {% if user.is_authenticated and user.is_staff %}
         <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:dashboard_home' %}">Admin Dashboard</a></li>
@@ -73,6 +75,7 @@
   <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
     <div>&copy; {% now "Y" %} CampusCanteen — Cloud-Based Canteen Management System</div>
     <div class="text-muted">Built with Django &amp; Supabase PostgreSQL</div>
+  
   </div>
 </footer>
 

@@ -50,7 +50,7 @@ a:hover { color: var(--chili); }
 .navbar-canteen .navbar-brand {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.4rem; 
   color: #FBF7F0;
   letter-spacing: -0.02em;
 }

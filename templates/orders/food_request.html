@@ -1,0 +1,121 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Request Food{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8 col-lg-6">
+
+            <!-- Main Card -->
+            <div class="food-card p-4 p-md-5">
+
+                <!-- Header -->
+                <div class="text-center mb-4">
+
+                    <div style="font-size: 45px;">
+                        🍽️
+                    </div>
+
+                    <h2 class="section-title mt-2">
+                        Request a Food Item
+                    </h2>
+
+                    <p class="text-muted">
+                        Can't find what you want?
+                        Tell us what you'd like and when you need it.
+                    </p>
+
+                </div>
+
+
+                <!-- Form -->
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    <!-- Food Request -->
+                    <div class="mb-4">
+
+                        <label for="{{ form.request_text.id_for_label }}"
+                               class="form-label fw-semibold">
+                            What food would you like?
+                        </label>
+
+                        <textarea
+                            name="{{ form.request_text.name }}"
+                            id="{{ form.request_text.id_for_label }}"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Example: I want 2 cheese sandwiches with extra cheese..."
+                            required>{{ form.request_text.value|default:'' }}</textarea>
+
+                        {% if form.request_text.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.request_text.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Requested Time -->
+                    <div class="mb-4">
+
+                        <label for="{{ form.requested_time.id_for_label }}"
+                               class="form-label fw-semibold">
+                            When do you need it?
+                        </label>
+
+                        {{ form.requested_time }}
+
+                        {% if form.requested_time.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.requested_time.errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-text">
+                            Select the date and time when you need your food.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Submit -->
+                    <div class="d-grid">
+
+                        <button type="submit"
+                                class="btn btn-canteen btn-lg">
+                            Send Food Request
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- Small Information -->
+            <div class="text-center mt-3">
+
+                <small class="text-muted">
+                    Your request will be reviewed by the canteen team.
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```
