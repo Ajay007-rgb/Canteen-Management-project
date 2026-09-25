@@ -165,10 +165,10 @@ RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default='')   #Razorpay
 
 # Supabase Cloud Storage for media files
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID = config('d0e00ec12057e025574d83b8b3e71791')
-AWS_SECRET_ACCESS_KEY = config('4e69bd5e7bd3c4ba50fbf6b46a9fae5bb1097e64f4f8001077d068dd3a35f436')
+AWS_ACCESS_KEY_ID = config('SUPABASE_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = config('SUPABASE_SECRET_KEY')
 AWS_STORAGE_BUCKET_NAME = config('SUPABASE_BUCKET_NAME', default='media')
-AWS_S3_ENDPOINT_URL = config('https://osugzqyviowcwxlvkjqb.storage.supabase.co/storage/v1/s3')
+AWS_S3_ENDPOINT_URL = config('SUPABASE_S3_ENDPOINT')
 AWS_S3_REGION_NAME = config('SUPABASE_REGION', default='ap-south-1')
 AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_FILE_OVERWRITE = False
