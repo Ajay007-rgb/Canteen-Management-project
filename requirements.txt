@@ -6,4 +6,4 @@ dj-database-url==2.2.0
 whitenoise==6.7.0
 gunicorn==22.0.0
 razorpay==1.4.2
-setuptools
+setuptools<81
